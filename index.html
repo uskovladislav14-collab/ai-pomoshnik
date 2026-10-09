@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+<title>ИИ-Помощник</title>
+</head>
+<body>
+<main class="app">
+  <header>
+    <h1>ИИ-ПОМОЩНИК</h1>
+    <div id="status" class="status">Готов</div>
+  </header>
+
+  <section class="controls">
+    <button id="listenBtn" class="primary">🎤 НАЧАТЬ СЛУШАТЬ</button>
+    <button id="clearBtn">Очистить</button>
+  </section>
+
+  <section class="card">
+    <h2>Распознанная речь</h2>
+    <div id="transcript" class="transcript">Здесь появится речь преподавателя…</div>
+  </section>
+
+  <section class="card">
+    <h2>Вопрос / задание</h2>
+    <div id="question" class="question">Вопрос пока не обнаружен.</div>
+    <button id="answerBtn" class="answer">Получить ответ</button>
+  </section>
+
+  <section class="card">
+    <h2>Ответ ИИ</h2>
+    <div id="answer" class="answerText">Ответ появится здесь.</div>
+  </section>
+
+  <section class="card">
+    <h2>История</h2>
+    <div id="history"></div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
