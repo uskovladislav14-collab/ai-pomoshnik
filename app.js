@@ -40,25 +40,41 @@ function cleanSpeech(text) {
   let s = normalizeText(text);
   if (!s) return "";
 
-  // Повтор одного и того же слова:
-  // "Что Что такое Что такое" -> "Что такое"
-  s = s.replace(/\b(\S+)(?:\s+\1\b)+/gi, "$1");
+  // Удаляем повторяющиеся подряд фрагменты речи.
+  // Например:
+  // "Что Что такое Что такое фотосинтез"
+  // -> "Что такое фотосинтез"
+  let words = s.split(" ");
 
-  // Повторяющиеся группы слов:
-  // "что такое что такое фотосинтез"
-  for (let size = 6; size >= 2; size--) {
-    const words = s.split(" ");
-    if (words.length < size * 2) continue;
+  for (let pass = 0; pass < 8; pass++) {
+    let changed = false;
 
-    const a = words.slice(0, size).join(" ").toLowerCase();
-    const b = words.slice(size, size * 2).join(" ").toLowerCase();
+    for (let i = 0; i < words.length - 1 && !changed; i++) {
+      const maxSize = Math.min(6, Math.floor((words.length - i) / 2));
 
-    if (a === b) {
-      s = [...words.slice(0, size), ...words.slice(size * 2)].join(" ");
+      for (let size = 1; size <= maxSize; size++) {
+        const a = words
+          .slice(i, i + size)
+          .join(" ")
+          .toLowerCase();
+
+        const b = words
+          .slice(i + size, i + size * 2)
+          .join(" ")
+          .toLowerCase();
+
+        if (a === b) {
+          words.splice(i + size, size);
+          changed = true;
+          break;
+        }
+      }
     }
+
+    if (!changed) break;
   }
 
-  return normalizeText(s);
+  return normalizeText(words.join(" "));
 }
 
 /* Добавляем только действительно новый текст */
