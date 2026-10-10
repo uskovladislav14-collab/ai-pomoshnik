@@ -319,31 +319,52 @@ function saveHistory(q, a) {
 /* Запуск */
 recognition = initRecognition();
 
-listenBtn.onclick = () => {
-  if (!recognition) return;
-
+listenBtn.onclick = async () => {
   if (listening) {
     listening = false;
+    recognitionRunning = false;
 
     try {
-      recognition.stop();
+      recognition?.stop();
     } catch (_) {}
-    recognitionRunning = false;
 
     listenBtn.classList.remove("listening");
     listenBtn.textContent = "🎤 НАЧАТЬ СЛУШАТЬ";
-
     setStatus("Пауза");
-  } else {
-    try {
-      if (recognitionRunning) return;
-      recognition.start();
-      setStatus("Запуск микрофона…");
-    } catch (e) {
-      recognitionRunning = false;
-      setStatus("Не удалось запустить микрофон");
-      console.error(e);
+    return;
+  }
+
+  setStatus("Запуск микрофона…");
+
+  try {
+    // На Android сначала явно запрашиваем доступ к микрофону.
+    if (navigator.mediaDevices?.getUserMedia) {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true
+      });
+      stream.getTracks().forEach((track) => track.stop());
     }
+
+    // Создаём новый объект распознавания при каждом новом запуске.
+    recognition = initRecognition();
+
+    if (!recognition) return;
+
+    recognitionRunning = false;
+    recognition.start();
+  } catch (e) {
+    listening = false;
+    recognitionRunning = false;
+    listenBtn.classList.remove("listening");
+    listenBtn.textContent = "🎤 НАЧАТЬ СЛУШАТЬ";
+
+    if (e?.name === "NotAllowedError" || e?.name === "PermissionDeniedError") {
+      setStatus("Разреши доступ к микрофону в браузере");
+    } else {
+      setStatus("Не удалось включить микрофон");
+    }
+
+    console.error(e);
   }
 };
 
