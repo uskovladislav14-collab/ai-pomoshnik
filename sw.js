@@ -1,9 +1,9 @@
-const CACHE="ai-helper-v3";
+const CACHE="ai-helper-v4";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE).then((cache) =>
-      cache.addAll(["./","./index.html","./style.css","./app.js","./manifest.json"])
+      cache.addAll(["./","./index.html","./style.css","./app.js?v=6","./manifest.json"])
     )
   );
   self.skipWaiting();
