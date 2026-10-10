@@ -428,6 +428,7 @@ answerBtn.onclick = async () => {
     console.error(e);
 
     answer.textContent =
+      e?.message ||
       "Не удалось получить ответ. Проверь подключение ИИ и API-ключ на сервере.";
 
     setStatus("Ошибка ИИ");
@@ -459,7 +460,7 @@ renderHistory();
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
     .register(
-      "sw.js?v=4"
+      "sw.js?v=5"
     )
     .catch(() => {});
 }
