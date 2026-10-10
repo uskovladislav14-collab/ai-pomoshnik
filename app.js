@@ -460,7 +460,7 @@ renderHistory();
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
     .register(
-      "sw.js?v=5"
+      "sw.js?v=6"
     )
     .catch(() => {});
 }
