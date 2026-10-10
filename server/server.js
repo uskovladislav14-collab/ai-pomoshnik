@@ -60,8 +60,23 @@ app.post("/api/answer", async (req, res) => {
   } catch (error) {
     console.error("Ошибка OpenAI:", error);
 
-    res.status(500).json({
-      error: "Ошибка при обращении к ИИ"
+    const status = Number(error?.status) || 500;
+    const code = error?.code || error?.error?.code || "";
+
+    let message = "Ошибка при обращении к ИИ";
+
+    if (status === 401) {
+      message = "Ключ OpenAI недействителен или был отозван.";
+    } else if (status === 429 || code === "insufficient_quota") {
+      message = "OpenAI API сообщает, что лимит или баланс API исчерпан. Проверь оплату и лимиты API.";
+    } else if (status === 403) {
+      message = "OpenAI API отклонил запрос. Проверь доступ проекта и права API-ключа.";
+    } else if (status === 404) {
+      message = "Выбранная модель OpenAI недоступна для этого API-ключа.";
+    }
+
+    res.status(status >= 400 && status < 600 ? status : 500).json({
+      error: message
     });
   }
 });
