@@ -12,6 +12,7 @@ const historyEl = $("history");
 
 let recognition = null;
 let listening = false;
+let recognitionRunning = false;
 let finalText = "";
 let currentQuestion = "";
 
@@ -216,6 +217,7 @@ function initRecognition() {
 
   r.onstart = () => {
     listening = true;
+    recognitionRunning = true;
 
     listenBtn.classList.add("listening");
     listenBtn.textContent = "⏹ ОСТАНОВИТЬ";
@@ -224,6 +226,7 @@ function initRecognition() {
   };
 
   r.onend = () => {
+    recognitionRunning = false;
     if (!listening) return;
 
     setTimeout(() => {
@@ -325,6 +328,7 @@ listenBtn.onclick = () => {
     try {
       recognition.stop();
     } catch (_) {}
+    recognitionRunning = false;
 
     listenBtn.classList.remove("listening");
     listenBtn.textContent = "🎤 НАЧАТЬ СЛУШАТЬ";
@@ -332,8 +336,14 @@ listenBtn.onclick = () => {
     setStatus("Пауза");
   } else {
     try {
+      if (recognitionRunning) return;
       recognition.start();
-    } catch (_) {}
+      setStatus("Запуск микрофона…");
+    } catch (e) {
+      recognitionRunning = false;
+      setStatus("Не удалось запустить микрофон");
+      console.error(e);
+    }
   }
 };
 
